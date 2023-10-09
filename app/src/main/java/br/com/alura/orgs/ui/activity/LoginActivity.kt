@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityLoginBinding
 import br.com.alura.orgs.extensions.vaiPara
+import br.com.alura.orgs.preferences.dataStore
+import br.com.alura.orgs.preferences.usuarioLogadoPreferences
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
@@ -31,11 +34,11 @@ class LoginActivity : AppCompatActivity() {
             val usuario = binding.activityLoginUsuario.text.toString()
             val senha = binding.activityLoginSenha.text.toString()
             lifecycleScope.launch() {
-                usuarioDao.autentica(usuario,senha)?.let {
-                    Log.i("LoginActivity", "onCreate: $usuario - $senha")
-                    vaiPara(ListaProdutosActivity::class.java){
-                        putExtra("CHAVE_USUARIO_ID",it.id)
+                usuarioDao.autentica(usuario,senha)?.let {usuario ->
+                    dataStore.edit { preferences->
+                        preferences[usuarioLogadoPreferences] = usuario.id
                     }
+                    vaiPara(ListaProdutosActivity::class.java)
                 }?:Toast.makeText(this@LoginActivity, "Erro ao realizar login ", Toast.LENGTH_SHORT).show()
             }
 

@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
+import br.com.alura.orgs.preferences.dataStore
+import br.com.alura.orgs.preferences.usuarioLogadoPreferences
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -33,12 +35,13 @@ class ListaProdutosActivity : AppCompatActivity() {
         configuraFab()
         lifecycleScope.launch {
             launch {
-                intent.getStringExtra("CHAVE_USUARIO_ID")?.let { usuarioID ->
-                    usuarioDao.buscaPorId(usuarioID).collect {
-
-                        Log.i("ListaProdutos", it.toString())
-
+                dataStore.data.collect {preferences ->
+                    preferences[usuarioLogadoPreferences]?.let {
+                        usuarioDao.buscaPorId(it).collect{
+                            Log.i("ListaProdutosDataStore",it.toString())
+                        }
                     }
+
                 }
             }
             produtoDao.buscaTodos().collect { produtos ->
