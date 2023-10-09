@@ -2,6 +2,7 @@ package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
@@ -17,7 +18,10 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityListaProdutosActivityBinding.inflate(layoutInflater)
     }
-    private val dao by lazy {
+    private val usuarioDao by lazy {
+        AppDatabase.instancia(this).usuarioDao()
+    }
+    private val produtoDao by lazy {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
@@ -28,9 +32,19 @@ class ListaProdutosActivity : AppCompatActivity() {
         configuraRecyclerView()
         configuraFab()
         lifecycleScope.launch {
-            dao.buscaTodos().collect { produtos ->
+            launch {
+                intent.getStringExtra("CHAVE_USUARIO_ID")?.let { usuarioID ->
+                    usuarioDao.buscaPorId(usuarioID).collect {
+
+                        Log.i("ListaProdutos", it.toString())
+
+                    }
+                }
+            }
+            produtoDao.buscaTodos().collect { produtos ->
                 adapter.atualiza(produtos)
             }
+
         }
     }
 
