@@ -1,5 +1,6 @@
 package br.com.alura.orgs.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
@@ -9,6 +10,8 @@ import br.com.alura.orgs.extensions.vaiPara
 import br.com.alura.orgs.model.Usuario
 import br.com.alura.orgs.preferences.dataStore
 import br.com.alura.orgs.preferences.usuarioLogadoPreferences
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -19,7 +22,9 @@ abstract class UsuarioBaseActivity:AppCompatActivity() {
         AppDatabase.instancia(this).usuarioDao()
     }
 
-    protected var usuario:Usuario? = null
+    private val _usuario:MutableStateFlow<Usuario?> = MutableStateFlow(null)
+    protected var usuario:StateFlow<Usuario?> = _usuario
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +52,16 @@ abstract class UsuarioBaseActivity:AppCompatActivity() {
         }
     }
 
-    private fun buscaUsuario(usuarioId: String){
-        lifecycleScope.launch {
-            usuario = usuarioDao.buscaPorId(usuarioId).firstOrNull()
-        }
+    private suspend fun buscaUsuario(usuarioId: String){
+
+            _usuario.value = usuarioDao.buscaPorId(usuarioId).firstOrNull()
+
     }
 
     private fun vaiParaATelaDeLogin() {
-        vaiPara(LoginActivity::class.java)
+        vaiPara(LoginActivity::class.java){
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) // isso limpa a stack
+        }
         finish()
     }
 

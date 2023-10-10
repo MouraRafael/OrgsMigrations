@@ -2,6 +2,7 @@ package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -10,7 +11,9 @@ import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 
@@ -33,8 +36,11 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         configuraFab()
         lifecycleScope.launch {
             launch {
-                usuario?.let {
+                usuario.filterNotNull()
+                    .collect{
+                        Log.i("Lista",it.toString())
                     buscaProdutosUsuario()
+
                 }
             }
 
@@ -58,16 +64,6 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
-
-
-
-
-
-
-
 
 
     private suspend fun buscaProdutosUsuario() {

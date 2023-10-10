@@ -1,7 +1,7 @@
 package br.com.alura.orgs.ui.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.database.dao.ProdutoDao
@@ -9,11 +9,13 @@ import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
+
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
-class FormularioProdutoActivity : AppCompatActivity() {
+class FormularioProdutoActivity : UsuarioBaseActivity() {
 
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
@@ -38,6 +40,17 @@ class FormularioProdutoActivity : AppCompatActivity() {
                 }
         }
         tentaCarregarProduto()
+
+
+        lifecycleScope.launch{
+            deslogaUsuario()
+            usuario.filterNotNull()
+                .collect{
+                Log.i("Formulario",it.toString()
+                )
+            }
+
+        }
     }
 
     private fun tentaCarregarProduto() {
