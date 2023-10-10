@@ -43,7 +43,6 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
 
 
         lifecycleScope.launch{
-            deslogaUsuario()
             usuario.filterNotNull()
                 .collect{
                 Log.i("Formulario",it.toString()
