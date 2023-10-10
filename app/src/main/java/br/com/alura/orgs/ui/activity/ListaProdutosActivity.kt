@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
+import br.com.alura.orgs.extensions.vaiPara
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
@@ -60,6 +61,9 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
                 lifecycleScope.launch {
                     deslogaUsuario()
                 }
+            }
+            R.id.lista_produtos_menu_perfil ->{
+                vaiPara(UsuarioPerfilActivity::class.java)
             }
         }
         return super.onOptionsItemSelected(item)
