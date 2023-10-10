@@ -38,11 +38,10 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         lifecycleScope.launch {
             launch {
                 usuario.filterNotNull()
-                    .collect{
-                        Log.i("Lista",it.toString())
-                    buscaProdutosUsuario()
+                    .collect {usuario->
+                        buscaProdutosUsuario(usuario.id)
 
-                }
+                    }
             }
 
 
@@ -62,7 +61,8 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
                     deslogaUsuario()
                 }
             }
-            R.id.lista_produtos_menu_perfil ->{
+
+            R.id.lista_produtos_menu_perfil -> {
                 vaiPara(UsuarioPerfilActivity::class.java)
             }
         }
@@ -70,8 +70,8 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
     }
 
 
-    private suspend fun buscaProdutosUsuario() {
-        produtoDao.buscaTodos().collect { produtos ->
+    private suspend fun buscaProdutosUsuario(idUsuario: String) {
+        produtoDao.buscaTodos(idUsuario).collect { produtos ->
             adapter.atualiza(produtos)
         }
     }
