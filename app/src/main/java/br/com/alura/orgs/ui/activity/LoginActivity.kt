@@ -40,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
                         preferences[usuarioLogadoPreferences] = usuario.id
                     }
                     vaiPara(ListaProdutosActivity::class.java)
+                    finish()
                 }?:Toast.makeText(this@LoginActivity, "Erro ao realizar login ", Toast.LENGTH_SHORT).show()
             }
 
